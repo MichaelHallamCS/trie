@@ -3,35 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trie</title>
+    <title>Trie Autocomplete | Smooth Operators</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div id='hero'>
-        <!-- Banner -->
+    <main id="hero">
         <header id="header">
-            <h1>Smooth Operators Present: Trie Autocomplete</h1>
+            <p class="eyebrow">SMOOTH OPERATORS PRESENT</p>
+            <h1>Trie <span>Autocomplete</span></h1>
+            <p class="subtitle">Explore how a prefix tree finds words as you type.</p>
         </header>
-        <div id="container"> 
-            <div id="word-section">
-                <!-- Text box -->
-                <input type="text" id="textBox" name="textBoxText" placeholder="Start Typing">
-            </div>
-            <div id="visual-section">
-                <h2>Trie Progression</h2>
 
-            </div>
-            <div id = "dictionary">
-                <h2> Dictionary (Trie): </h2>
+        <div id="container">
+            <section id="word-section" class="panel" aria-labelledby="autocomplete-title">
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-kicker">01 / SEARCH</p>
+                        <h2 id="autocomplete-title">Try it out</h2>
+                    </div>
+                    <span class="panel-tag">LIVE INPUT</span>
+                </div>
+                <label for="textBox" class="input-label">Enter a word prefix</label>
+                <input type="text" id="textBox" name="textBoxText" placeholder="Start typing..." autocomplete="off" spellcheck="false">
+                <div class="suggestions-area">
+                    <div class="suggestions-heading">Suggestions <span>Matching words will appear here</span></div>
+                    <div id="suggestions" aria-live="polite">
+                        <p class="empty-state">Start typing to explore the trie.</p>
+                    </div>
+                </div>
+            </section>
 
-            </div>
-                
+            <section id="visual-section" class="panel" aria-labelledby="visual-title">
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-kicker">02 / VISUALIZE</p>
+                        <h2 id="visual-title">Trie Progression</h2>
+                    </div>
+                    <span class="panel-tag">TREE VIEW</span>
+                </div>
+                <div id="trie-visualization" class="visualization-canvas">
+                    <div class="visual-placeholder">
+                        <div class="placeholder-symbol" aria-hidden="true">⌘</div>
+                        <p>Your trie visualization goes here</p>
+                        <span>Watch the traversal as you type a prefix.</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dictionary" class="panel" aria-labelledby="dictionary-title">
+                <div class="panel-heading dictionary-heading">
+                    <div>
+                        <p class="section-kicker">03 / WORD BANK</p>
+                        <h2 id="dictionary-title">Dictionary <span class="muted">(Trie)</span></h2>
+                    </div>
+                    <span class="panel-tag">STORED WORDS</span>
+                </div>
+                <div id="dictionary-words" class="dictionary-content">
+                    <p class="empty-state">Words stored in your trie can be displayed here.</p>
+                </div>
+            </section>
         </div>
-    </div>
-   
-
-
-<script type="module" src="app.js"></script>
+        <footer>Built by Smooth Operators · Data Structures Project</footer>
+    </main>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
