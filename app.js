@@ -1,8 +1,26 @@
-//main init
+import Trie from './trie.js';
 
-//loadwords
+const trie = new Trie();
+const input = document.getElementById('textBox');
+const suggestions = document.getElementById('suggestions');
+const treeVis = document.getElementById('trie-visualization');
 
-//buildtrie
 
-//event listener / handle input
+async function init(){
+    text = fetch('data/words.txt');
+    words = 
+}
 
+function handleInput(){
+
+}
+
+function renderSuggestions(words){
+
+}
+
+function selectSuggestion(word){
+
+}
+
+init();

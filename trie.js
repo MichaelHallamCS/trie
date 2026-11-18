@@ -11,7 +11,7 @@ class TrieNode {
     }
 }
 
-class Trie {
+export class Trie {
     constructor(){
         this.root = new TrieNode();
     }
@@ -81,6 +81,10 @@ class Trie {
     }
 
     autocomplete(prefix){
-       
+       let node = this.root;
+       let curr = "";
+       for (let i = 0; i < prefix.length; i++){
+        if (!node.children)
+       }
 
     }
