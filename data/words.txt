@@ -1098,7 +1098,7 @@ came
 supply
 nothing
 certain
-usr
+user
 executive
 running
 lower
@@ -9978,7 +9978,7 @@ insulation
 newman
 marsh
 ricky
-ctrl
+control
 scared
 theta
 infringement

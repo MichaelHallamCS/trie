@@ -5,14 +5,25 @@ const input = document.getElementById('textBox');
 const suggestions = document.getElementById('suggestions');
 const treeVis = document.getElementById('trie-visualization');
 
+const wordsPath = 'data/words.txt';
 
 async function init(){
-    text = fetch('data/words.txt');
-    words = 
+    loadWords(wordsPath);
+    input.addEventListener("input", handleInput());
+}
+
+async function loadWords(filePath) {
+    const response = await fetch(filePath);
+    const text = await response.text();
+    const words = text.split("/\r?\n/");
+
+    for (const word of words){
+        trie.insert(word);
+    }
 }
 
 function handleInput(){
-
+    
 }
 
 function renderSuggestions(words){
