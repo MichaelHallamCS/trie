@@ -28,7 +28,8 @@
                 <div class="suggestions-area">
                     <div class="suggestions-heading">Suggestions <span>Matching words will appear here</span></div>
                     <div id="suggestions" aria-live="polite">
-                        <p class="empty-state">Start typing to explore the trie.</p>
+                        <p class="empty-state" id = "startTypingText">Start typing to explore the trie.</p>
+                        <ul id="suggestions-list"></ul>
                     </div>
                 </div>
             </section>
@@ -50,7 +51,7 @@
                 </div>
             </section>
 
-            <section id="dictionary" class="panel" aria-labelledby="dictionary-title">
+            <!-- <section id="dictionary" class="panel" aria-labelledby="dictionary-title">
                 <div class="panel-heading dictionary-heading">
                     <div>
                         <p class="section-kicker">03 / WORD BANK</p>
@@ -61,9 +62,9 @@
                 <div id="dictionary-words" class="dictionary-content">
                     <p class="empty-state">Words stored in your trie can be displayed here.</p>
                 </div>
-            </section>
+            </section> -->
         </div>
-        <footer>Built by Michael Hallam, Ethan Onesti, and Mark Herrell<br>UWGB - Comp Sci 351 | Data Structures</footer>
+        <footer>Built by Michael Hallam, Ethan Onesti, and Mark Herrell<br>UWGB - CS 351 | Data Structures</footer>
     </main>
     <script type="module" src="app.js"></script>
 </body>
