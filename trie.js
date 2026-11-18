@@ -84,7 +84,7 @@ export class Trie {
        let node = this.root;
        let curr = "";
        for (let i = 0; i < prefix.length; i++){
-        if (!node.children)
+        if (!node.children[])
        }
 
     }
