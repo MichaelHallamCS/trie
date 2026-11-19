@@ -12,12 +12,9 @@ const wordsPath = 'data/words.txt';
 async function init(){
     await loadWords(wordsPath);
     input.addEventListener("input", handleInput);
-    //renderSuggestions();
-    // trie.insert("cat");
-    // trie.insert("car");
-    // trie.insert("dog");
 }
 
+//takes words from text file and adds them to trie
 async function loadWords(filePath) {
     const response = await fetch(filePath);
     const text = await response.text();
@@ -28,28 +25,30 @@ async function loadWords(filePath) {
     }
 }
 
+//function to take input as it updates, call autocomplete, and call renderSuggestions with the autocomplete list
 function handleInput(){
     const prefix = input.value.trim().toLowerCase();
+    //clears the default text
     if (!prefix){
         suggestionsList.innerHTML = "";
-        //clear tree
     }
+    //gets the autcomplete list and ending prefix node
     const results = trie.autocomplete(prefix);
     let node = trie.findPrefixNode(prefix);
 
+    //calls methods to display list and tree visual
     renderSuggestions(results);
     renderTree(treeVis, prefix, node);
 }
 
+//displays the autocomplete list on the web page
 function renderSuggestions(suggestions){
 
+    //clears default text
     suggestionsList.innerHTML = "";
     document.getElementById('startTypingText').innerHTML = "";
-    
-    //const testArray = ["pig", "cow", "dog", "cat"];
-    
-    //document.getElementById("startTypingText").style.display = 'none';
 
+    //iterates through each words and adds it to html as a list item
     suggestions.forEach((word) => {
         const li = document.createElement("li");
         li.textContent = word;
@@ -58,6 +57,7 @@ function renderSuggestions(suggestions){
     });
 }
 
+//replaces the prefix with the selected autocomplete word
 function selectSuggestion(word){
     input.value = word;
     handleInput();

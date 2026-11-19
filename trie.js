@@ -78,13 +78,42 @@ export class Trie {
         prefix = prefix.toLowerCase().trim();
         let node = this.root;
         if(!prefix) return null;
-
+        
         for(const c of prefix){
             if(!node.children.get(c)) return null;
             node = node.children.get(c);
         }
 
         return node;
+    }
+
+    //mark thoughs
+    autocomplete(prefix){
+        prefix = prefix.toLowerCase().trim();
+        //uses helper method to find where prefix ends
+        let node = this.findPrefixNode(prefix);
+        const words = [];
+        if(node == null) return words;
+        //calls depth first search method which searches for words and adds them to words array
+        this.dfs(node, prefix, words)
+        //removes the prefix from the suggested words
+        if(words.includes(prefix)) words.shift();
+        return words;
+    }
+
+    dfs(node, prefix, words){
+        //checks if a node marks the end of a word
+        //if so, it gets added to the words array
+        if(node.isEndOfWord) {
+            words.push(prefix);
+        }
+
+        //if its not the end of a word
+        //add the new character to the end of the prefix (bulid word)
+        //recursively call bfs
+        for(const [c, child] of node.children) {
+            this.dfs(child, prefix + c, words);
+        }
     }
     
     // // finds where the prefix ends and records each letter as it goes to the next
@@ -118,32 +147,4 @@ export class Trie {
     //     }
     // }
 
-
-    
-    //mark thoughs
-    autocomplete(prefix){
-        prefix = prefix.toLowerCase().trim();
-        //uses helper method to find where prefix ends
-        let node = this.findPrefixNode(prefix);
-        const words = [];
-        if(node == null) return words;
-        //calls depth first search method which searches for words and adds them to words array
-        this.dfs(node, prefix, words)
-        return words;
-    }
-
-    dfs(node, prefix, words){
-        //checks if a node marks the end of a word
-        //if so, it gets added to the words array
-        if(node.isEndOfWord) {
-            words.push(prefix);
-        }
-
-        //if its not the end of a word
-        //add the new character to the end of the prefix (bulid word)
-        //recursively call bfs
-        for(const [c, child] of node.children) {
-            this.dfs(child, prefix + c, words);
-        }
-    }
 }
