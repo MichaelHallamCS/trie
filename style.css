@@ -152,3 +152,20 @@ ul{
 #suggestions-list::-webkit-scrollbar-track {
     background: transparent;
 }
+
+.tree-edge { stroke: var(--panel-border); stroke-width: 2; }
+
+.tree-node circle { fill: #1c2b43; stroke: var(--panel-border); stroke-width: 2; }
+.tree-node text {
+    fill: var(--text-color);
+    font-size: 15px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+.tree-node.root circle { stroke-dasharray: 4 3; }
+.tree-node.more circle { stroke-dasharray: 3 3; opacity: .7; }
+.tree-node.more text { fill: var(--muted-color); font-size: 12px; }
+.tree-node.current circle { stroke: var(--accent-color); }
+.tree-node.current text { fill: var(--accent-color); }
+.tree-node .word-end-ring { fill: none; stroke: var(--accent-color); stroke-width: 1.5; }
