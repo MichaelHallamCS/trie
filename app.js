@@ -6,6 +6,7 @@ const input = document.getElementById('textBox');
 const suggestions = document.getElementById('suggestions');
 const suggestionsList = document.getElementById("suggestions-list");
 const treeVis = document.getElementById('trie-visualization');
+const startTypingText = document.getElementById('startTypingText');
 
 const wordsPath = 'data/words.txt';
 
@@ -28,10 +29,13 @@ async function loadWords(filePath) {
 //function to take input as it updates, call autocomplete, and call renderSuggestions with the autocomplete list
 function handleInput(){
     const prefix = input.value.trim().toLowerCase();
-    //clears the default text
-    if (!prefix){
-        suggestionsList.innerHTML = "";
+    
+    if (!prefix) {
+        startTypingText.style.display = "block";
+    } else {
+        startTypingText.style.display = "none";
     }
+
     //gets the autcomplete list and ending prefix node
     const results = trie.autocomplete(prefix);
     let node = trie.findPrefixNode(prefix);
@@ -46,7 +50,6 @@ function renderSuggestions(suggestions){
 
     //clears default text
     suggestionsList.innerHTML = "";
-    document.getElementById('startTypingText').innerHTML = "";
 
     //iterates through each words and adds it to html as a list item
     suggestions.forEach((word) => {

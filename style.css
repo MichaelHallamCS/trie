@@ -5,6 +5,8 @@
     --text-color: #f1f5f9;
     --muted-color: #b4c1d3;
     --accent-color: #67e8d0;
+    --current-node-color: #171717;
+    --word-end-color: #67e8d0;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -186,9 +188,9 @@ ul{
 .tree-node.root circle { stroke-dasharray: 4 3; }
 .tree-node.more circle { stroke-dasharray: 3 3; opacity: .7; }
 .tree-node.more text { fill: var(--muted-color); font-size: 12px; }
-.tree-node.current circle { stroke: var(--accent-color); }
-.tree-node.current text { fill: var(--accent-color); }
-.tree-node .word-end-ring { fill: none; stroke: var(--accent-color); stroke-width: 1.5; }
+.tree-node.current circle:not(.word-end-ring) { stroke: var(--current-node-color); }
+.tree-node.current text { fill: var(--muted-color); }
+.tree-node .word-end-ring { fill: none; stroke: var(--word-end-color); stroke-width: 1.5; }
 
 .tree-node { transform-box: fill-box; transform-origin: center; }
 .tree-node.enter {

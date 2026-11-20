@@ -14,7 +14,7 @@ export function renderTree(container, prefix, node) {
   container.innerHTML = '';
 
   if (!prefix) {
-    container.appendChild(message('Start typing to see the trie.'));
+    container.appendChild(message('Watch the traversal as you type a prefix.'));
     return;
   }
   if (!node) {
