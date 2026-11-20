@@ -42,7 +42,11 @@ function handleInput(){
 
     //calls methods to display list and tree visual
     renderSuggestions(results);
-    renderTree(treeVis, prefix, node);
+    renderTree(treeVis, prefix, node, (newPrefix) => {
+        //updates the prefix if a leaf node is clicked and recalls handleInput
+        input.value = newPrefix;
+        handleInput();
+    });
 }
 
 //displays the autocomplete list on the web page

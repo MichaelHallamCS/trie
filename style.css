@@ -217,3 +217,9 @@ ul{
 @media (prefers-reduced-motion: reduce) {
     .tree-node.enter, .tree-edge.enter { animation: none; stroke-dasharray: none; }
 }
+
+/* makes clickable treenodes give mouse a hover effect */
+.tree-node.clickable:hover circle:not(.word-end-ring) {
+    stroke: var(--accent-color);
+    stroke-width: 3;
+}

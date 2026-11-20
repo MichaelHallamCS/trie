@@ -8,7 +8,7 @@ const MAX_PATH = 5;
 
 let prevPrefix = ''; 
 
-export function renderTree(container, prefix, node) {
+export function renderTree(container, prefix, node, onNodeClick) {
   const before = prevPrefix;
   prevPrefix = prefix || '';
   container.innerHTML = '';
@@ -79,7 +79,15 @@ export function renderTree(container, prefix, node) {
   const parent = pathNodes[pathNodes.length - 1];
   childNodes.forEach(n => edge(svg, parent, n));
 
-  [...pathNodes, ...childNodes].forEach(n => circle(svg, n));
+  //[...pathNodes, ...childNodes].forEach(n => circle(svg, n));
+  pathNodes.forEach(n => circle(svg, n));
+
+  //makes it so when a leaf node is clicked it gets added to the prefix
+  childNodes.forEach(n => {
+    //makes sure only letter nodes and not 'more' nodes are added
+    if(n.cls === 'more') circle(svg, n);
+    else circle(svg, n, () => onNodeClick(prefix + n.label));
+  });
 
   container.appendChild(svg);
 }
@@ -100,7 +108,7 @@ function edge(svg, a, b) {
   svg.appendChild(line);
 }
 
-function circle(svg, n) {
+function circle(svg, n, onClick = null) {
   const g = make('g', { class: `tree-node ${n.cls || ''}`.trim() });
   if (n.enter) {
     g.classList.add('enter');
@@ -112,6 +120,13 @@ function circle(svg, n) {
   text.textContent = n.label;
   g.appendChild(text);
   svg.appendChild(g);
+
+  //make the node clickable
+  if(onClick) {
+    g.classList.add('clickable');
+    g.style.cursor = 'pointer';
+    g.addEventListener('click', onClick);
+  }
 }
 
 function message(text) {
