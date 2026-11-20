@@ -98,6 +98,12 @@ export class Trie {
         this.dfs(node, prefix, words)
         //removes the prefix from the suggested words
         if(words.includes(prefix)) words.shift();
+
+        //sorts word array by length and then alphabetical
+        words.sort((a, b) => {
+        return a.length - b.length || a.localeCompare(b);
+        });
+
         return words;
     }
 
