@@ -46,10 +46,27 @@ body {
 .suggestions-area { margin-top: 28px; }
 .suggestions-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-size: 14px; font-weight: 650; margin-bottom: 12px; }
 .suggestions-heading span { font-size: 11px; font-weight: 400; color: var(--muted-color); text-align: right; }
-#suggestions, .dictionary-content { border: 1px dashed #73839a; border-radius: 12px; background: rgba(15,23,42,.18); min-height: 115px; padding: 16px; }
+#suggestions, .dictionary-content { border: 1px dashed #73839a; border-radius: 12px; background: rgba(15,23,42,.18); min-height: 115px; padding: 16px; height: 220px; min-height: 0; overflow:hidden;}
 .empty-state { font-size: 13px; color: var(--muted-color); }
 #visual-section { display: flex; flex-direction: column; }
-.visualization-canvas { flex: 1; min-height: 270px; border: 1px dashed #73839a; border-radius: 12px; background: rgba(15,23,42,.22); display: grid; place-items: center; padding: 20px; }
+.visualization-canvas {
+    flex: none;
+    height: 380px;              /* fixed, no longer grows with the tree */
+    min-height: 0;
+    overflow: hidden;
+    display: flex;              /* was grid; flex makes the max-height below work */
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #73839a;
+    border-radius: 12px;
+    background: rgba(15,23,42,.22);
+    padding: 20px;
+}
+
+.tree-svg {
+    max-width: 100%;
+    max-height: 100%;           /* a tall tree scales down instead of stretching the page */
+}
 .visual-placeholder { text-align: center; color: #e4ebf5; }
 .placeholder-symbol { color: var(--accent-color); font-size: 40px; line-height: 1; margin-bottom: 15px; }
 .visual-placeholder p { font-size: 14px; font-weight: 600; }
@@ -87,7 +104,7 @@ ul{
     margin: 0;
     padding: 0;
     width: 100%;
-    max-height: 260px;
+    max-height: 100%;
     overflow-y: auto;
 }
 
@@ -102,6 +119,9 @@ ul{
     transition: background-color 0.2s ease,
                 color 0.2s ease,
                 padding-left 0.2s ease;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
 }
 
 /* Rounded corners */
@@ -151,4 +171,47 @@ ul{
 
 #suggestions-list::-webkit-scrollbar-track {
     background: transparent;
+}
+
+.tree-edge { stroke: var(--panel-border); stroke-width: 2; }
+
+.tree-node circle { fill: #1c2b43; stroke: var(--panel-border); stroke-width: 2; }
+.tree-node text {
+    fill: var(--text-color);
+    font-size: 15px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+.tree-node.root circle { stroke-dasharray: 4 3; }
+.tree-node.more circle { stroke-dasharray: 3 3; opacity: .7; }
+.tree-node.more text { fill: var(--muted-color); font-size: 12px; }
+.tree-node.current circle { stroke: var(--accent-color); }
+.tree-node.current text { fill: var(--accent-color); }
+.tree-node .word-end-ring { fill: none; stroke: var(--accent-color); stroke-width: 1.5; }
+
+.tree-node { transform-box: fill-box; transform-origin: center; }
+.tree-node.enter {
+    animation: node-pop .35s cubic-bezier(.34, 1.56, .64, 1) both;
+    animation-delay: var(--delay, 0s);
+}
+@keyframes node-pop {
+    from { opacity: 0; transform: scale(.3); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.tree-edge.enter {
+    stroke-dasharray: var(--len);
+    animation: edge-draw .3s ease-out both;
+    animation-delay: var(--delay, 0s);
+}
+@keyframes edge-draw {
+    from { stroke-dashoffset: var(--len); }
+    to   { stroke-dashoffset: 0; }
+}
+
+.tree-node circle, .tree-node text { transition: stroke .2s ease, fill .2s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tree-node.enter, .tree-edge.enter { animation: none; stroke-dasharray: none; }
 }

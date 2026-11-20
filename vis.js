@@ -1,117 +1,122 @@
-//render tree
-export function renderTree(){
-    //to be implemented
+const NS = 'http://www.w3.org/2000/svg';
+const R = 20;
+const GAP_Y = 68;
+const GAP_X = 54;
+const PAD = 16;
+const MAX_CHILDREN = 6;
+const MAX_PATH = 5;
+
+let prevPrefix = ''; 
+
+export function renderTree(container, prefix, node) {
+  const before = prevPrefix;
+  prevPrefix = prefix || '';
+  container.innerHTML = '';
+
+  if (!prefix) {
+    container.appendChild(message('Start typing to see the trie.'));
     return;
+  }
+  if (!node) {
+    container.appendChild(message(`No words start with "${prefix}"`));
+    return;
+  }
+
+  const grew = prefix.length > before.length && prefix.startsWith(before);
+  const shrank = prefix.length < before.length && before.startsWith(prefix);
+  const newCount = grew ? prefix.length - before.length
+                 : (shrank || prefix === before) ? 0
+                 : prefix.length;
+  const animateChildren = prefix !== before;
+
+  let letters = [...prefix];
+  const collapsed = letters.length > MAX_PATH;
+  if (collapsed) letters = letters.slice(-MAX_PATH);
+
+  const pathNodes = [{ label: '', cls: 'root' }];
+  if (collapsed) pathNodes.push({ label: '…', cls: 'more' });
+  letters.forEach((ch, i) => {
+    const last = i === letters.length - 1;
+    const freshIdx = i - (letters.length - newCount);
+    pathNodes.push({
+      label: ch,
+      cls: last ? 'current' : '',
+      end: last && node.isEndOfWord,
+      enter: freshIdx >= 0,
+      delay: Math.max(freshIdx, 0) * 0.08,
+    });
+  });
+
+  const entries = [...node.children.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  const shown = entries.slice(0, MAX_CHILDREN);
+  const extra = entries.length - shown.length;
+  const base = newCount * 0.08 + 0.05;
+  const childNodes = shown.map(([ch, child], i) => ({
+    label: ch,
+    end: child.isEndOfWord,
+    enter: animateChildren,
+    delay: base + i * 0.05,
+  }));
+  if (extra > 0) {
+    childNodes.push({ label: `+${extra}`, cls: 'more', enter: animateChildren, delay: base + shown.length * 0.05 });
+  }
+
+  const width = Math.max(childNodes.length * GAP_X, 2 * R + 2 * PAD) + 2 * PAD;
+  const levels = pathNodes.length + (childNodes.length ? 1 : 0);
+  const height = PAD * 2 + R * 2 + (levels - 1) * GAP_Y;
+  const cx = width / 2;
+
+ const svg = make('svg', { viewBox: `0 0 ${width} ${height}`, width, height, class: 'tree-svg' });
+  svg.style.maxWidth = '100%';
+  svg.style.height = 'auto';
+
+  pathNodes.forEach((n, i) => { n.x = cx; n.y = PAD + R + i * GAP_Y; });
+  const childY = PAD + R + pathNodes.length * GAP_Y;
+  const startX = cx - ((childNodes.length - 1) * GAP_X) / 2;
+  childNodes.forEach((n, i) => { n.x = startX + i * GAP_X; n.y = childY; });
+
+  for (let i = 1; i < pathNodes.length; i++) edge(svg, pathNodes[i - 1], pathNodes[i]);
+  const parent = pathNodes[pathNodes.length - 1];
+  childNodes.forEach(n => edge(svg, parent, n));
+
+  [...pathNodes, ...childNodes].forEach(n => circle(svg, n));
+
+  container.appendChild(svg);
 }
 
-//helper functions, draw child draw path
+function make(name, attrs = {}) {
+  const el = document.createElementNS(NS, name);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
 
-// CODE FROM DSA VIZUALIZER -- MICHAEL
-// function generateTree(arr) {
-//     canvas.innerHTML = '';
+function edge(svg, a, b) {
+  const line = make('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'tree-edge' });
+  if (b.enter) {
+    line.classList.add('enter');
+    line.style.setProperty('--len', Math.hypot(b.x - a.x, b.y - a.y));
+    line.style.setProperty('--delay', `${b.delay}s`);
+  }
+  svg.appendChild(line);
+}
 
-//     const n = arr.length;
-//     const levels = Math.floor(Math.log2(n)) + 1;
-//     const W = 600, R = 20, LEVEL_GAP = 70, PAD = 12;
-//     const H = PAD * 2 + R * 2 + (levels - 1) * LEVEL_GAP + 14;
+function circle(svg, n) {
+  const g = make('g', { class: `tree-node ${n.cls || ''}`.trim() });
+  if (n.enter) {
+    g.classList.add('enter');
+    g.style.setProperty('--delay', `${n.delay + 0.12}s`);
+  }
+  g.appendChild(make('circle', { cx: n.x, cy: n.y, r: R }));
+  if (n.end) g.appendChild(make('circle', { cx: n.x, cy: n.y, r: R - 5, class: 'word-end-ring' }));
+  const text = make('text', { x: n.x, y: n.y });
+  text.textContent = n.label;
+  g.appendChild(text);
+  svg.appendChild(g);
+}
 
-//     const pos = (i) => {
-//         const level = Math.floor(Math.log2(i + 1));
-//         const slot = i - (2 ** level - 1);
-//         return {
-//             x: ((slot + 0.5) / 2 ** level) * W,
-//             y: PAD + R + level * LEVEL_GAP
-//         };
-//     };
-
-//     const tree = document.createElement('div');
-//     tree.classList.add('heap-tree');
-//     tree.style.cssText = `position: relative; width: ${W}px; height: ${H}px; max-width: 100%;`;
-
-//     for (let i = 1; i < n; i++) {
-//         const p = pos(Math.floor((i - 1) / 2));
-//         const c = pos(i);
-//         const dx = c.x - p.x;
-//         const dy = c.y - p.y;
-//         const length = Math.hypot(dx, dy);
-//         const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-
-//         const edge = document.createElement('div');
-//         edge.classList.add('tree-edge');
-//         edge.dataset.child = i;
-//         edge.style.cssText = `
-//             position: absolute;
-//             left: ${p.x}px; top: ${p.y - 1}px;
-//             width: ${length}px; height: 2px;
-//             background-color: var(--text-dim);
-//             transform-origin: 0 50%;
-//             transform: rotate(${angle}deg);
-//         `;
-//         tree.appendChild(edge);
-//     }
-
-//     arr.forEach((value, i) => {
-//         const { x, y } = pos(i);
-
-//         const node = document.createElement('div');
-//         node.classList.add('tree-node');
-//         node.dataset.index = i;
-//         node.style.cssText = `
-//             position: absolute;
-//             left: ${x - R}px; top: ${y - R}px;
-//             width: ${R * 2}px; height: ${R * 2}px;
-//             border-radius: 50%;
-//             display: flex; align-items: center; justify-content: center;
-//             background-color: var(--accent-color);
-//             color: #fff; font-weight: bold;
-//             transition: background-color 0.2s;
-//         `;
-
-//         const val = document.createElement('span');
-//         val.classList.add('node-value');
-//         val.textContent = value;
-
-//         const idx = document.createElement('div');
-//         idx.textContent = i;
-//         idx.style.cssText = `
-//             position: absolute; top: ${R * 2 + 2}px; left: 0; width: 100%;
-//             text-align: center; font-size: 11px; font-weight: normal;
-//             color: var(--text-dim);
-//         `;
-
-//         node.append(val, idx);
-//         tree.appendChild(node);
-//     });
-
-//     const row = document.createElement('div');
-//     row.classList.add('heap-array');
-//     row.style.cssText = 'display: flex; gap: 6px; margin-top: 16px;';
-
-//     arr.forEach((value, i) => {
-//         const cell = document.createElement('div');
-//         cell.classList.add('heap-cell');
-//         cell.dataset.index = i;
-//         cell.style.cssText = `
-//             width: 40px; padding: 6px 0; text-align: center; border-radius: 6px;
-//             background-color: var(--accent-color); color: #fff; font-weight: bold;
-//             transition: background-color 0.2s;
-//         `;
-
-//         const val = document.createElement('span');
-//         val.classList.add('cell-value');
-//         val.textContent = value;
-
-//         const idx = document.createElement('div');
-//         idx.textContent = i;
-//         idx.style.cssText = 'font-size: 10px; font-weight: normal; opacity: 0.7;';
-
-//         cell.append(val, idx);
-//         row.appendChild(cell);
-//     });
-
-//     const wrapper = document.createElement('div');
-//     wrapper.classList.add('heap-view');
-//     wrapper.style.cssText = 'display: flex; flex-direction: column; align-items: center; width: 100%;';
-//     wrapper.append(tree, row);
-//     canvas.appendChild(wrapper);
-// }
+function message(text) {
+  const el = document.createElement('p');
+  el.className = 'empty-state';
+  el.textContent = text;
+  return el;
+}
