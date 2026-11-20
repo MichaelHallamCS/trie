@@ -66,7 +66,7 @@ export function renderTree(container, prefix, node) {
   const height = PAD * 2 + R * 2 + (levels - 1) * GAP_Y;
   const cx = width / 2;
 
-  const svg = make('svg', { viewBox: `0 0 ${width} ${height}`, width, class: 'tree-svg' });
+ const svg = make('svg', { viewBox: `0 0 ${width} ${height}`, width, height, class: 'tree-svg' });
   svg.style.maxWidth = '100%';
   svg.style.height = 'auto';
 
