@@ -60,8 +60,6 @@ export function renderTree(container, prefix, node, onNodeClick) {
   });
 
   const entries = [...node.children.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  // const shown = entries.slice(0, MAX_CHILDREN);
-  // const extra = entries.length - shown.length;
 
   //move children 6 over
   const shown = entries.slice(
@@ -79,9 +77,7 @@ export function renderTree(container, prefix, node, onNodeClick) {
     enter: animateChildren,
     delay: base + i * 0.05,
   }));
-  // if (extra > 0) {
-  //   childNodes.push({ label: `+${extra}`, cls: 'more', enter: animateChildren, delay: base + shown.length * 0.05 });
-  // }
+ 
   //shows number of nodes extra when there are more than able to show, or a back to beginning button when at the end of the list
   if(entries.length > MAX_CHILDREN) {
     childNodes.push({
@@ -110,8 +106,6 @@ export function renderTree(container, prefix, node, onNodeClick) {
   const parent = pathNodes[pathNodes.length - 1];
   childNodes.forEach(n => edge(svg, parent, n));
 
-  //[...pathNodes, ...childNodes].forEach(n => circle(svg, n));
-  //pathNodes.forEach(n => circle(svg, n));
   //makes it so past nodes are clickable to return to shorter prefixes
   pathNodes.forEach(n => {
     if(n.nodePrefix !== undefined && n.nodePrefix !== prefix) {
