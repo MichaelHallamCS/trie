@@ -7,9 +7,15 @@ const MAX_CHILDREN = 6;
 const MAX_PATH = 5;
 
 let prevPrefix = ''; 
+let childOffset = 0;
 
 export function renderTree(container, prefix, node, onNodeClick) {
   const before = prevPrefix;
+  
+  if(prefix !== before) {
+    childOffset = 0;
+  }
+  
   prevPrefix = prefix || '';
   container.innerHTML = '';
 
@@ -33,14 +39,20 @@ export function renderTree(container, prefix, node, onNodeClick) {
   const collapsed = letters.length > MAX_PATH;
   if (collapsed) letters = letters.slice(-MAX_PATH);
 
-  const pathNodes = [{ label: '', cls: 'root' }];
+  const pathNodes = [{ label: '', cls: 'root', nodePrefix: '' }];
+
   if (collapsed) pathNodes.push({ label: '…', cls: 'more' });
+
+  const offset = prefix.length - letters.length;
+
   letters.forEach((ch, i) => {
     const last = i === letters.length - 1;
     const freshIdx = i - (letters.length - newCount);
+
     pathNodes.push({
       label: ch,
       cls: last ? 'current' : '',
+      nodePrefix: prefix.slice(0, offset + i + 1),
       end: last && node.isEndOfWord,
       enter: freshIdx >= 0,
       delay: Math.max(freshIdx, 0) * 0.08,
@@ -48,8 +60,18 @@ export function renderTree(container, prefix, node, onNodeClick) {
   });
 
   const entries = [...node.children.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  const shown = entries.slice(0, MAX_CHILDREN);
-  const extra = entries.length - shown.length;
+  // const shown = entries.slice(0, MAX_CHILDREN);
+  // const extra = entries.length - shown.length;
+
+  //move children 6 over
+  const shown = entries.slice(
+    childOffset,
+    childOffset + MAX_CHILDREN
+  );
+  const extra = Math.max(
+    0, entries.length - childOffset - shown.length
+  );
+
   const base = newCount * 0.08 + 0.05;
   const childNodes = shown.map(([ch, child], i) => ({
     label: ch,
@@ -57,8 +79,17 @@ export function renderTree(container, prefix, node, onNodeClick) {
     enter: animateChildren,
     delay: base + i * 0.05,
   }));
-  if (extra > 0) {
-    childNodes.push({ label: `+${extra}`, cls: 'more', enter: animateChildren, delay: base + shown.length * 0.05 });
+  // if (extra > 0) {
+  //   childNodes.push({ label: `+${extra}`, cls: 'more', enter: animateChildren, delay: base + shown.length * 0.05 });
+  // }
+  //shows number of nodes extra when there are more than able to show, or a back to beginning button when at the end of the list
+  if(entries.length > MAX_CHILDREN) {
+    childNodes.push({
+      label: extra > 0 ? `+${extra}` : `↻`,
+      cls: 'more',
+      enter: animateChildren,
+      delay: base + shown.length * 0.05
+    })
   }
 
   const width = Math.max(childNodes.length * GAP_X, 2 * R + 2 * PAD) + 2 * PAD;
@@ -80,13 +111,31 @@ export function renderTree(container, prefix, node, onNodeClick) {
   childNodes.forEach(n => edge(svg, parent, n));
 
   //[...pathNodes, ...childNodes].forEach(n => circle(svg, n));
-  pathNodes.forEach(n => circle(svg, n));
+  //pathNodes.forEach(n => circle(svg, n));
+  //makes it so past nodes are clickable to return to shorter prefixes
+  pathNodes.forEach(n => {
+    if(n.nodePrefix !== undefined && n.nodePrefix !== prefix) {
+      circle(svg, n, () => onNodeClick(n.nodePrefix));
+    } else {
+      circle(svg, n);
+    }
+  })
 
   //makes it so when a leaf node is clicked it gets added to the prefix
   childNodes.forEach(n => {
-    //makes sure only letter nodes and not 'more' nodes are added
-    if(n.cls === 'more') circle(svg, n);
-    else circle(svg, n, () => onNodeClick(prefix + n.label));
+    //makes 'more' nodes clickable to shift over
+    if(n.cls === 'more'){ 
+      circle(svg, n, () => {
+        childOffset += MAX_CHILDREN;
+        if(childOffset >= entries.length) {
+          childOffset = 0;
+        }
+
+        renderTree(container, prefix, node, onNodeClick);
+
+      });
+      //makes letter nodes clickable to add to prefix
+    } else circle(svg, n, () => onNodeClick(prefix + n.label));
   });
 
   container.appendChild(svg);
