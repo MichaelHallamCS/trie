@@ -14,7 +14,6 @@ class TrieNode {
 export class Trie {
     constructor(){
         this.root = new TrieNode();
-        this.isWord = false;
     }
 
     insert(word){
