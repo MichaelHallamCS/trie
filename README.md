@@ -6,7 +6,7 @@ Built by Michael Hallam, Ethan Onesti, and Mark Herrell (Smooth Operators) for C
 
 **Demo video:** <!-- TODO: add link -->
 
-**Live Site:**https://trie-me.vercel.app/
+**Live Site:** https://trie-me.vercel.app/
 
 ## Features
 
