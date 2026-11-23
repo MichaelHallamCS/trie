@@ -6,6 +6,8 @@ Built by Michael Hallam, Ethan Onesti, and Mark Herrell (Smooth Operators) for C
 
 **Demo video:** <!-- TODO: add link -->
 
+**Live Site:**https://trie-me.vercel.app/
+
 ## Features
 
 - **Live autocomplete:** suggestions update on every keystroke, sorted by length, then alphabetically
